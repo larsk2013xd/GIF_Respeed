@@ -3,20 +3,22 @@ import time
 import os
 import os.path
 
-print("GIF ReSpeed")
-print("Developed by LarsKDev")
-print("Version 1.0 | 18 Feb 2022")
-print("---------------------------")
 
+delay = ""
 targetFile = ""
 
+print("GIF ReSpeed")
+print("Developed by LarsKDev")
+print("Version 1.0.1 | 18 Feb 2022")
+print("---------------------------")
+
+
 if len(sys.argv) == 1:
-    # No file has been fed ask user for file
-    print("Please specify the path of your .gif:")
-    targetFile = input("Target:")
+    targetFile = input("Target File:")
 elif len(sys.argv) == 2:
     targetFile = sys.argv[1]
 
+print("Loading file: ", targetFile, " ...")
 
 
 if os.path.exists(targetFile):
@@ -26,54 +28,50 @@ else:
     time.sleep(2)
     exit()
 
-print("A delay of 0.01 seconds might not cause wanted results in some viewers. Consider setting the interval to at least 0.02")
-delay = ""
+print("Loaded file.")
+byte = file.read(3)
+if byte.decode() != "GIF":
+    print("This file is not a correct (/ correctly formatted) .GIF file")
+    print("The file might be corrupt, or this file is not of the GIF type")
+    print("Exiting...")
+    time.sleep(2)
+    exit()
+
+
 while not isinstance(delay, int):
     try:
-        delay = int(input("Please specify the frame interval in hundredths of seconds..."))
-        if delay > 255:
-            print("Please enter a value of less than 256") 
+        delayFPS = int(input("Please specify the new frame interval in frames per second: "))
+        
+        if delayFPS > 50:
+            print("FPS can at most be 50") 
             delay = ""
-        elif delay <= 0:
-            print("Please enter a strictly positive number")
+        elif delayFPS < 1:
+            print("FPS must at least be 1")
             delay = ""
+        else:
+            delay = int(100/delayFPS)
     except:
         print("Please enter a valid integer (< 256) ")
         
     
 delayBytes = delay.to_bytes(1, 'little')
 
+print("Starting conversion. This should not take too long...")
 
-byte = file.read(3)
+while byte:
 
-offsetCount = 0
-
-print("Starting conversion")
-if byte.decode() == "GIF":
-
-    while byte:
-        
-        if byte == b'\x21':
-            byte = file.read(1)
-            if byte == b'\xF9':
-                byte = file.read(1)
-                if byte == b'\x04':
-                    file.seek(1, os.SEEK_CUR)
-                    file.write(delayBytes)
-                    
-                    
-                
-            
+    if byte == b'\x21':
         byte = file.read(1)
+        if byte == b'\xF9':
+            byte = file.read(1)
+            if byte == b'\x04':
+                file.seek(1, os.SEEK_CUR)
+                file.write(delayBytes)
+    byte = file.read(1)
 
-else:
-    print("Unsupported file...")
-    time.sleep(3)
-    exit()
-
-print("Finishing up...")
+print("Succesfully converted the file. Finishing up.")
 file.close()
 
-print("File converted... Closing program")
+print("Done!")
 os.startfile(targetFile)
 time.sleep(3) 
