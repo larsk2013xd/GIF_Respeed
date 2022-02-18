@@ -26,6 +26,7 @@ else:
     time.sleep(2)
     exit()
 
+print("A delay of 0.01 seconds might not cause wanted results in some viewers. Consider setting the interval to at least 0.02")
 delay = ""
 while not isinstance(delay, int):
     try:
@@ -39,8 +40,7 @@ while not isinstance(delay, int):
     except:
         print("Please enter a valid integer (< 256) ")
         
-if delay == 1:
-    print("A delay of 0.01 seconds might not cause wanted results in some viewers. Consider setting the interval to at least 0.02")
+    
 delayBytes = delay.to_bytes(1, 'little')
 
 
@@ -68,6 +68,8 @@ if byte.decode() == "GIF":
 
 else:
     print("Unsupported file...")
+    time.sleep(3)
+    exit()
 
 print("Finishing up...")
 file.close()
