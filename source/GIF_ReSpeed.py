@@ -73,5 +73,8 @@ print("Succesfully converted the file. Finishing up.")
 file.close()
 
 print("Done!")
-os.startfile(targetFile)
+if sys.platform == "win32":
+    os.startfile(targetFile)
+else:
+    print("Your file has been converted. Closing the program...")
 time.sleep(3) 
