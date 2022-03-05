@@ -3,78 +3,90 @@ import time
 import os
 import os.path
 
+def reSpeed(path, fps):   
+    
+    fps = min(fps, 50)
+    interval = int(100 / fps)
+    intervalBytes = interval.to_bytes(1, "little")
+    
+    print("Loading file: ", path, " ...")
+    
+    if os.path.exists(targetFile):
+        file = open(targetFile, "r+b")
+    else:
+        print("The file was not found")
+        return(False)
+        
+    fullFile = file.read()
+    file.close()
+    
+    targetOut = os.path.splitext(targetFile)[0] + "_reSpeed_" + str(fps) + ".gif"
+    outFile = open(targetOut, "wb")
+    outFile.write(fullFile)
+    outFile.close()
+    
+    for runOption in runOptions:
+        if runOption == "-r":
+            targetOut = targetFile
+    
+    file = open(targetOut, "r+b")
+        
+    byte = file.read(3)
+    
+    if byte.decode() != "GIF":
+        print("This file is not a correct (/ correctly formatted) .GIF file")
+        print("The file might be corrupt, or this file is not of the GIF type")
+        return(False)
+     
+    print("ReSpeeding '", path, "' to a speed of", fps, "FPS...")
+    
+    while byte:
+        if byte == b'\x21':
+            byte = file.read(1)
+            if byte == b'\xF9':
+                byte = file.read(1)
+                if byte == b'\x04':
+                    file.seek(1, os.SEEK_CUR)
+                    file.write(intervalBytes)
+        byte = file.read(1)
+    
+    
+    file.close()
+    
+    for runOption in runOptions:
+        if runOption == "-o":
+            if sys.platform == "win32":
+                os.startfile(targetOut)
+    
+    return(True)
+    
 
-delay = ""
+fps = ""
 targetFile = ""
+runOptions = []
 
 print("GIF ReSpeed")
 print("Developed by LarsKDev")
-print("Version 1.0.1 | 18 Feb 2022")
+print("Version 1.0.2 | 5 Mar 2022")
 print("---------------------------")
 
-
 if len(sys.argv) == 1:
-    targetFile = input("Target File:")
-elif len(sys.argv) == 2:
+    targetFile = input("Please specify the location of the .gif file")
+elif len(sys.argv) > 1:
     targetFile = sys.argv[1]
+    runOptions = sys.argv[2:]
 
-print("Loading file: ", targetFile, " ...")
-
-
-if os.path.exists(targetFile):
-    file = open(targetFile, "r+b")
-else:
-    print("File not found. Exiting...")
-    time.sleep(2)
-    exit()
-
-print("Loaded file.")
-byte = file.read(3)
-if byte.decode() != "GIF":
-    print("This file is not a correct (/ correctly formatted) .GIF file")
-    print("The file might be corrupt, or this file is not of the GIF type")
-    print("Exiting...")
-    time.sleep(2)
-    exit()
-
-
-while not isinstance(delay, int):
-    try:
-        delayFPS = int(input("Please specify the new frame interval in frames per second: "))
-        
-        if delayFPS > 50:
-            print("FPS can at most be 50") 
-            delay = ""
-        elif delayFPS < 1:
-            print("FPS must at least be 1")
-            delay = ""
-        else:
-            delay = int(100/delayFPS)
-    except:
-        print("Please enter a valid integer (< 256) ")
-        
+if len(sys.argv) > 2:
+    print("Running with additional arguments", runOptions)
     
-delayBytes = delay.to_bytes(1, 'little')
 
-print("Starting conversion. This should not take too long...")
+while not isinstance(fps, int):
+    try:
+        fps = int(input("Please specify the new frame interval in frames per second: (GIF files only support up to 50 fps)"))
+    except:
+        print("Please enter a valid integer")
+        
 
-while byte:
+reSpeed(targetFile, fps)
+time.sleep(2)
 
-    if byte == b'\x21':
-        byte = file.read(1)
-        if byte == b'\xF9':
-            byte = file.read(1)
-            if byte == b'\x04':
-                file.seek(1, os.SEEK_CUR)
-                file.write(delayBytes)
-    byte = file.read(1)
-
-print("Succesfully converted the file. Finishing up.")
-file.close()
-
-print("Done!")
-if sys.platform == "win32":
-    os.startfile(targetFile)
-else:
-    print("Your file has been converted. Closing the program...")
-time.sleep(3) 
