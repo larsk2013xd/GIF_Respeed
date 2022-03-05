@@ -9,10 +9,11 @@ def reSpeed(path, fps):
     interval = int(100 / fps)
     intervalBytes = interval.to_bytes(1, "little")
     
-    print("Loading file: ", path, " ...")
+
     
-    if os.path.exists(targetFile):
-        file = open(targetFile, "r+b")
+    if os.path.isfile(path):
+        print("Loading file: ", path, " ...")
+        file = open(path, "r+b")
     else:
         print("The file was not found")
         return(False)
@@ -20,14 +21,14 @@ def reSpeed(path, fps):
     fullFile = file.read()
     file.close()
     
-    targetOut = os.path.splitext(targetFile)[0] + "_reSpeed_" + str(fps) + ".gif"
+    targetOut = os.path.splitext(path)[0] + "_reSpeed_" + str(fps) + ".gif"
+    for runOption in runOptions:
+        if runOption == "-r":
+            targetOut = path
+
     outFile = open(targetOut, "wb")
     outFile.write(fullFile)
     outFile.close()
-    
-    for runOption in runOptions:
-        if runOption == "-r":
-            targetOut = targetFile
     
     file = open(targetOut, "r+b")
         
@@ -67,7 +68,7 @@ runOptions = []
 
 print("GIF ReSpeed")
 print("Developed by LarsKDev")
-print("Version 1.0.2 | 5 Mar 2022")
+print("Version 1.0.3 | 5 Mar 2022")
 print("---------------------------")
 
 if len(sys.argv) == 1:
@@ -86,6 +87,15 @@ while not isinstance(fps, int):
     except:
         print("Please enter a valid integer")
         
+
+for runOption in runOptions:
+    if runOption == "-f":
+        print("Converting all .gifs in folder...")
+        targetFiles = os.listdir(targetFile)
+        
+        for f in targetFiles:
+            reSpeed(targetFile + "/" + f, fps)
+    
 
 reSpeed(targetFile, fps)
 time.sleep(2)
