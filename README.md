@@ -11,6 +11,10 @@ For advanced use open CMD and enter `python GIF_ReSpeed.py [fileLocation] [args]
 - `-o` : This will open the converted file after conversion (Windows only)
 
 # Changelog
+`1.0.3`
+- Added `-f` argument. This will convert all files in the given `[fileLocation]` folder. In this case the user should indicate a folder location and not a file location
+- Fixed `-r`.
+
 `1.0.2`
 - Added arguments. See the "How to use" for explanation.
 - Gif_ReSpeed will now make a copy of the file and adjust its framerate to prevent accidental corruption. (The original file can still be overwritten using the `-r` argument)
