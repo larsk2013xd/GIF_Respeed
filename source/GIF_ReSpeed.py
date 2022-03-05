@@ -87,16 +87,22 @@ while not isinstance(fps, int):
     except:
         print("Please enter a valid integer")
         
-
+folderOption = False
 for runOption in runOptions:
     if runOption == "-f":
+        folderOption = True
         print("Converting all .gifs in folder...")
-        targetFiles = os.listdir(targetFile)
-        
-        for f in targetFiles:
-            reSpeed(targetFile + "/" + f, fps)
-    
+        if os.path.isdir(targetFile):
+            targetFiles = os.listdir(targetFile)
+            
+            for f in targetFiles:
+                reSpeed(targetFile + "/" + f, fps)
+        else:
+            print("Please specify a folder...")
+            
+            
+if not folderOption:
+    reSpeed(targetFile, fps)
 
-reSpeed(targetFile, fps)
 time.sleep(2)
 
