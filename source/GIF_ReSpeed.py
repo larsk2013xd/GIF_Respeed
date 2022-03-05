@@ -10,46 +10,56 @@ def reSpeed(path, fps):
     intervalBytes = interval.to_bytes(1, "little")
     
 
-    
-    if os.path.isfile(path):
-        print("Loading file: ", path, " ...")
-        file = open(path, "r+b")
-    else:
-        print("The file was not found")
+    try:
+        if os.path.isfile(path):
+            print("Loading file: ", path, " ...")
+            file = open(path, "r+b")
+        else:
+            print("The file was not found")
+            return(False)
+        
+        byte = file.read(3)
+        
+        if byte.decode() != "GIF":
+            print("Not a .gif")
+            return(False)
+        
+        file.seek(0)
+        fullFile = file.read()
+        file.close()
+        
+        targetOut = os.path.splitext(path)[0] + "_reSpeed_" + str(fps) + ".gif"
+        for runOption in runOptions:
+            if runOption == "-r":
+                targetOut = path
+        
+        
+        outFile = open(targetOut, "wb")
+        outFile.write(fullFile)
+        outFile.close()
+        
+        file = open(targetOut, "r+b")
+    except Exception as e:
+        print("Not a .gif")
         return(False)
+    
+    try:
+        print("ReSpeeding '", path, "' to a speed of", fps, "FPS...")
         
-    fullFile = file.read()
-    file.close()
-    
-    targetOut = os.path.splitext(path)[0] + "_reSpeed_" + str(fps) + ".gif"
-    for runOption in runOptions:
-        if runOption == "-r":
-            targetOut = path
-
-    outFile = open(targetOut, "wb")
-    outFile.write(fullFile)
-    outFile.close()
-    
-    file = open(targetOut, "r+b")
-        
-    byte = file.read(3)
-    
-    if byte.decode() != "GIF":
+        while byte:
+            if byte == b'\x21':
+                byte = file.read(1)
+                if byte == b'\xF9':
+                    byte = file.read(1)
+                    if byte == b'\x04':
+                        file.seek(1, os.SEEK_CUR)
+                        file.write(intervalBytes)
+            byte = file.read(1)
+    except:
         print("This file is not a correct (/ correctly formatted) .GIF file")
         print("The file might be corrupt, or this file is not of the GIF type")
+        file.close()
         return(False)
-     
-    print("ReSpeeding '", path, "' to a speed of", fps, "FPS...")
-    
-    while byte:
-        if byte == b'\x21':
-            byte = file.read(1)
-            if byte == b'\xF9':
-                byte = file.read(1)
-                if byte == b'\x04':
-                    file.seek(1, os.SEEK_CUR)
-                    file.write(intervalBytes)
-        byte = file.read(1)
     
     
     file.close()
