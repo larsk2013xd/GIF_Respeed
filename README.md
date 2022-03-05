@@ -9,6 +9,7 @@ Simply drag / drop a .gif file onto the program. Indicate the desired framerate 
 For advanced use open CMD and enter `python GIF_ReSpeed.py [fileLocation] [args]` if `[fileLocation]` is not indicated the program will ask the user for a file location. Optional arguments can be passed in the `[args]` argument. Possible arguments are:
 - `-r` : This will overwrite the original file. This introduces the danger of corruption so it is not adviced to use this.
 - `-o` : This will open the converted file after conversion (Windows only)
+- `-f` : This will iterate through an entire folder. All .gif files in this folder will be converted to the desired framerate
 
 # Changelog
 `1.0.3`
