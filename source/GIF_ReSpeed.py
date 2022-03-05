@@ -5,7 +5,7 @@ import os.path
 
 def reSpeed(path, fps):   
     
-    fps = min(fps, 50)
+    fps = min(max(fps, 1) , 50)
     interval = int(100 / fps)
     intervalBytes = interval.to_bytes(1, "little")
     
@@ -39,11 +39,7 @@ def reSpeed(path, fps):
         outFile.close()
         
         file = open(targetOut, "r+b")
-    except Exception as e:
-        print("Not a .gif")
-        return(False)
-    
-    try:
+        
         print("ReSpeeding '", path, "' to a speed of", fps, "FPS...")
         
         while byte:
@@ -55,9 +51,9 @@ def reSpeed(path, fps):
                         file.seek(1, os.SEEK_CUR)
                         file.write(intervalBytes)
             byte = file.read(1)
-    except:
-        print("This file is not a correct (/ correctly formatted) .GIF file")
-        print("The file might be corrupt, or this file is not of the GIF type")
+    
+    except Exception as e:
+        print(e)
         file.close()
         return(False)
     
