@@ -6,5 +6,14 @@ There's not much more to it. I decided to create one because the only other way 
 # How to use
 Simply drag / drop a .gif file onto the program. Indicate the desired framerate and within a matter of seconds your GIF will go FAF or SAF!
 
+For advanced use open CMD and enter `python GIF_ReSpeed.py [fileLocation] [args]` if `[fileLocation]` is not indicated the program will ask the user for a file location. Optional arguments can be passed in the `[args]` argument. Possible arguments are:
+- `-r` : This will overwrite the original file. This introduces the danger of corruption so it is not adviced to use this.
+- `-o` : This will open the converted file after conversion (Windows only)
+
+# Changelog
+`1.0.2`
+- Added arguments. See the "How to use" for explanation.
+- Gif_ReSpeed will now make a copy of the file and adjust its framerate to prevent accidental corruption. (The original file can still be overwritten using the `-r` argument)
+
 # Requirements
 This program uses no extra packages besides the default `os`, `path` and `time` packages. Neat isn't it :)
