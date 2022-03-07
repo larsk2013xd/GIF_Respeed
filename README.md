@@ -12,6 +12,10 @@ For advanced use open CMD and enter `python GIF_ReSpeed.py [fileLocation] [args]
 - `-f` : This will iterate through an entire folder. All .gif files in this folder will be converted to the desired framerate
 
 # Changelog
+
+`1.0.4`
+- ....
+
 `1.0.3`
 - Added `-f` argument. This will convert all files in the given `[fileLocation]` folder. In this case the user should indicate a folder location and not a file location
 - Fixed `-r`.
