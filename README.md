@@ -14,7 +14,8 @@ For advanced use open CMD and enter `python GIF_ReSpeed.py [fileLocation] [args]
 # Changelog
 
 `1.0.4`
-- ....
+- Added `-g` argument. This will retrieve the framerate of the given .gif file without changing the speed
+
 
 `1.0.3`
 - Added `-f` argument. This will convert all files in the given `[fileLocation]` folder. In this case the user should indicate a folder location and not a file location

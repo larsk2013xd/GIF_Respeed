@@ -3,12 +3,49 @@ import time
 import os
 import os.path
 
-def reSpeed(path, fps):   
+
+runOptions = []
+os.system('cls')
+os.system('color 4')
+def getSpeed(path):
     
+    try:
+        file = open(path, "r+b")
+        unstable = False
+        nFrames = 0
+        intervalCount = 0
+        avg_interval = 0
+        byte = file.read(3)
+        if byte.decode() != "GIF":
+            return(False, 0)
+        
+        while byte:
+            if byte == b'\x21':
+                byte = file.read(1)
+                if byte == b'\xF9':
+                    byte = file.read(1)
+                    if byte == b'\x04':
+                        file.seek(1, os.SEEK_CUR)
+                        interval = int.from_bytes(file.read(1), "little")
+                        nFrames += 1
+                        intervalCount += interval
+                        avg_interval = intervalCount / nFrames
+                        if abs(interval - avg_interval) > 1 and not unstable:
+                            unstable = True
+                            print("This GIF file seems to have an unstable framerate...")
+            byte = file.read(1)
+    
+        return(True, int(1/(0.01*avg_interval)))
+    except Exception as e:
+        return(False, 0)
+    
+
+def reSpeed(path, fps):   
+    global runOptions
     fps = min(fps, 50)
     interval = int(100 / fps)
     intervalBytes = interval.to_bytes(1, "little")
-    
+        
 
     try:
         if os.path.isfile(path):
@@ -44,7 +81,7 @@ def reSpeed(path, fps):
         return(False)
     
     try:
-        print("ReSpeeding '", path, "' to a speed of", fps, "FPS...")
+        print("ReSpeeding '", path, "' from a speed of ", getSpeed(path)[1], " FPS to ", fps, "FPS...")
         
         while byte:
             if byte == b'\x21':
@@ -70,49 +107,66 @@ def reSpeed(path, fps):
                 os.startfile(targetOut)
     
     return(True)
-    
 
-fps = ""
-targetFile = ""
-runOptions = []
+def getUserInput():
+    global runOptions
+    fps = ""
+    targetFile = ""
+    if len(sys.argv) == 1:
+        targetFile = input("Please specify the location of the .gif file")
+    elif len(sys.argv) > 1:
+        targetFile = sys.argv[1]
+        runOptions = sys.argv[2:]
+
+    if len(sys.argv) > 2:
+        print("Running with additional arguments", runOptions)
+        
+    for runOption in runOptions:
+        if runOption == "-g":
+            print("Retrieving gif speed of...", targetFile)
+            result = getSpeed(targetFile)
+            if result[0]:
+                print(result[1], " FPS")
+            else:
+                print("The file is not in the correct GIF format")
+            return True
+            
+            
+    while not isinstance(fps, int):
+        try:
+            fps = int(input("Please specify the new frame interval in frames per second: (GIF files only support up to 50 fps)"))
+        except:
+            print("Please enter a valid integer")
+            
+    for runOption in runOptions:
+        if runOption == "-f":
+            print("Converting all .gifs in folder...")
+            if os.path.isdir(targetFile):
+                targetFiles = os.listdir(targetFile)
+                
+                for f in targetFiles:
+                    reSpeed(targetFile + "/" + f, fps)
+                    
+                return True
+            else:
+                print("Please specify a folder...")
+                return True
+                
+                
+    reSpeed(targetFile, fps)
+    return True  
+
+
 
 print("GIF ReSpeed")
 print("Developed by LarsKDev")
-print("Version 1.0.3 | 5 Mar 2022")
+print("Version 1.0.4 | 7 Mar 2022")
 print("---------------------------")
 
-if len(sys.argv) == 1:
-    targetFile = input("Please specify the location of the .gif file")
-elif len(sys.argv) > 1:
-    targetFile = sys.argv[1]
-    runOptions = sys.argv[2:]
 
-if len(sys.argv) > 2:
-    print("Running with additional arguments", runOptions)
-    
-
-while not isinstance(fps, int):
-    try:
-        fps = int(input("Please specify the new frame interval in frames per second: (GIF files only support up to 50 fps)"))
-    except:
-        print("Please enter a valid integer")
-        
-folderOption = False
-for runOption in runOptions:
-    if runOption == "-f":
-        folderOption = True
-        print("Converting all .gifs in folder...")
-        if os.path.isdir(targetFile):
-            targetFiles = os.listdir(targetFile)
-            
-            for f in targetFiles:
-                reSpeed(targetFile + "/" + f, fps)
-        else:
-            print("Please specify a folder...")
-            
-            
-if not folderOption:
-    reSpeed(targetFile, fps)
-
+getUserInput()
+print("Exiting program...")
 time.sleep(2)
+os.system('color 7')
+os.system('cls')
 
