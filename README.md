@@ -10,6 +10,7 @@ For advanced use open CMD and enter `python GIF_ReSpeed.py [fileLocation] [args]
 - `-r` : This will overwrite the original file. This introduces the danger of corruption so it is not adviced to use this.
 - `-o` : This will open the converted file after conversion (Windows only)
 - `-f` : This will iterate through an entire folder. All .gif files in this folder will be converted to the desired framerate
+- `-g` : This will retrieve the framerate of a given gif file.
 
 # Changelog
 
